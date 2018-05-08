@@ -1,14 +1,17 @@
 import httpclient
 import json
 
-var url = "http://data.smartdublin.ie/cgi-bin/rtpi/busstopinformation?format=json"
-
+let url = "http://data.smartdublin.ie/cgi-bin/rtpi/busstopinformation?format=json"
 
 proc getJsonBusStops (urlToParse = ""):JsonNode =
     var http = newHttpClient()
-    var jsonString = http.request(urlToParse,httpMethod= HttpGet).body()
+    let jsonString = http.request(urlToParse,httpMethod= HttpGet).body()
     return parseJson(jsonString)
 
-var jsonStops = getJsonBusStops(url)
-echo jsonStops["errorcode"]
+let jsonStops = getJsonBusStops(url)
+var stops = newSeq[string](0)
 
+for i in jsonStops["results"] :
+    stops.add(i["stopid"].getStr())
+
+echo stops

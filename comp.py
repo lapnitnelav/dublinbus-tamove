@@ -1,7 +1,13 @@
 import requests
+import csv
 
 data = requests.get("http://data.smartdublin.ie/cgi-bin/rtpi/busstopinformation?format=json").json()
 
-stopsArr = [ str(x["stopid"]) for x in data["results"] ]
+print "Results :"+str(data["numberofresults"])
+stopsArr = [ [x["stopid"],x["shortname"]] for x in data["results"] ]
 
-print stopsArr
+with open("stationsPython.csv",'wb') as csvfile:
+    stops = csv.writer(csvfile)
+    stops.writerow(["stopId","stopName"])
+    stops.writerows(stopsArr)
+

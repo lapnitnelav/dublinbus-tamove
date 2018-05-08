@@ -1,5 +1,7 @@
 import httpclient
 import json
+import os
+import strutils
 
 let url = "http://data.smartdublin.ie/cgi-bin/rtpi/busstopinformation?format=json"
 
@@ -9,9 +11,12 @@ proc getJsonBusStops (urlToParse = ""):JsonNode =
     return parseJson(jsonString)
 
 let jsonStops = getJsonBusStops(url)
-var stops = newSeq[string](0)
+let results:int = jsonStops["numberofresults"].getInt()
+echo "Results :"&intToStr(results)
+var stopsString:string = "stopId,stopName\n"
 
 for i in jsonStops["results"] :
-    stops.add(i["stopid"].getStr())
+    stopsString.add(i["stopid"].getStr()&","&i["shortname"].getStr()&"\n")
 
-echo stops
+writeFile("stationsNim.csv",stopsString)
+
